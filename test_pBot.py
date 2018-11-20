@@ -1,6 +1,6 @@
 import pBot
 
-pbot = pBot.pBot("Егор")
+pbot = pBot.pBot("anonym")
 
 pbot.Init()
 
