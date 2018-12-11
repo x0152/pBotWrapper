@@ -16,7 +16,7 @@ class pBot(object):
 
     def Init(self):
         self.InitParams()
-        self.CreateChat()
+        return self.CreateChat()
 
     def Ask(self, request):
 
@@ -44,7 +44,7 @@ class pBot(object):
             answer = js["answer"]
         except Exception as e:
             print("Request error!({0}): {1}".format(e, html))
-            exit(1) 
+            return ""
 
         #bot saved last three request and answer
         #save last request and answer
@@ -81,12 +81,13 @@ class pBot(object):
             js = json.loads(html)
         except Exception as e:
             print("Request error!: {0}".format(e))
-            exit(1) 
+            return False
 
         if "status" not in js or js["status"] != "OK":
             print("Impossible to create chat! -> {0}".format(html))
-            exit(1)
-        
+            return False
+
+        return True 
 
     def InitParams(self):
         #get unix_time
