@@ -46,8 +46,7 @@ class pBot(object):
             print("Request error!({0}): {1}".format(e, html))
             return ""
 
-        #bot saved last three request and answer
-        #save last request and answer
+        #bot is saving last three requests and answers
         self.params["request_3"] = self.params["request_2"]
         self.params["answer_3"] = self.params["answer_2"]
 
