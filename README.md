@@ -22,3 +22,8 @@ while msg != "exit":
 ```
 
 <img src = "example.png"></img>
+## Траблшутинг
+### Ошибка 502 Bad Gateway
+<p>Для корректной работы необхоимо, чтобы время клиента совпадало с временем сервера.</p>
+<p><b>Решение: Установить таймзону Europe/Moscow: </b></p>
+<p><code>sudo timedatectl set-timezone Europe/Moscow</code></p>
