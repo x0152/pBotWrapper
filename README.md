@@ -12,18 +12,13 @@ python3 example_pBot.py
 ```python
 import pBot
 
-pbot = pBot.pBot("<Твое имя>")
-pbot.Init()
+pbot = pBot.pBot("anonym")
 
-msg = input("Введи сообщение: ")
+msg = input("Введите сообщение: ")
 while msg != "exit":
-    print("pBot: {0}".format(pbot.Ask(msg)))
+
+    print("pBot: {0}".format(pbot.ask(msg)))
     msg = input("Вы: ")
 ```
 
 <img src = "example.png"></img>
-## Траблшутинг
-### Ошибка 502 Bad Gateway
-<p>Для корректной работы необхоимо, чтобы время клиента совпадало с временем сервера.</p>
-<p><b>Решение: Установить таймзону Europe/Moscow: </b></p>
-<p><code>sudo timedatectl set-timezone Europe/Moscow</code></p>

@@ -1,5 +1,6 @@
 import random
-from datetime import datetime, date, time
+import time, os
+from datetime import datetime, date
 
 #code translated from js
 
@@ -26,7 +27,6 @@ def getCRCTable():
     return signedTransactions
 
 def crc(param):
-    
     crcTable = getCRCTable()
 
     crc = 0 ^ -1
@@ -55,14 +55,15 @@ def uuidv4():
 
 
 
-def getCRCSign(canCreateDiscussions):
-    return crc(api() + str(canCreateDiscussions) + \
-           "WxvttruvF01cvHy8" + \
-           "8r5yD8pl8lLcz20G" + \
-           "8dY72lsSOvXnJF4T")
+def getCRCSign(t):
+    return crc(f"{api()}{t}qVxRWnespIsJg7DxFbF6N9FiQR5cjnHyygru3JcToH4dPdiNH5SXOYIc00qMXPKJ")
 
-def unix_time(dt):
+def unix_time():
+    os.environ['TZ'] = 'Europe/Moscow'
+    time.tzset()
+
+    dt = datetime.today()
     epoch = datetime.utcfromtimestamp(0)
     delta = dt - epoch
-    return delta.total_seconds()
+    return delta.total_seconds() * 1000 - 10**7
 

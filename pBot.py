@@ -1,49 +1,56 @@
-from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+import requests
 from datetime import datetime, date, time
-import sys
 import random
-import json
 import crc
 
-class pBot(object):
+class pBot():
 
+    ASK_URL = "http://p-bot.ru/api/getAnswer"
+    CREATE_DIALOG_URL = "http://p-bot.ru/api/getPatternsCount"
+
+    session = None
     params = {}
     name = ""
 
     def __init__(self, name):
         self.name = name
 
-    def Init(self):
-        self.InitParams()
-        return self.CreateChat()
+        t = crc.unix_time()
+        self.params = {"request" : "",
+                "request_1" : "",
+                "answer_1" : "",
+                "request_2" : "",
+                "answer_2" : "",
+                "request_3" : "",
+                "bot_name" : "pBot",
+                "user_name" : self.name,
+                "dialog_lang" : "ru",
+                "dialog_id" : crc.uuidv4(),
+                "dialog_greeting" : "False",
 
-    def Ask(self, request):
+                "a" : crc.api(),
+                "b" : crc.crc(f"{t}b"),
+                "c" : crc.getCRCSign(t),
+                "d" : crc.crc(f"{crc.unix_time()}d"),
+                "e" : random.random(),
+                "t" : t,
+                "x" : random.random() * 10}
 
-        url = 'http://p-bot.ru/api/getAnswer'
-        
-        self.params["request"] = request
-
-        request = Request(url, urlencode(self.params).encode())
-
-        stat_code = 0
-        html = ""
-        
-        request.add_header('Cookie','{0}={1}; {2}={3}; {4}={5}'.\
-                format("dialog_id", self.params["dialog_id"],\
-                       "dialog_sentiment", "0", \
-                       "last_visit", "1542708055035::1542718855035"))
+            
+        self.create_chat()
 
 
+    def ask(self, question):
+        self.params["request"] = question 
+
+        js = {}
+        response = None
         try:
-            r = urlopen(request)
-            html = r.read().decode()
-            status_code = r.getcode()
-
-            js = json.loads(html)
+            response = self.session.post(self.ASK_URL, data = self.params)
+            js = response.json()
             answer = js["answer"]
         except Exception as e:
-            print("Request error!({0}): {1}".format(e, html))
+            print("Request error!({0}): {1}".format(e, js))
             return ""
 
         #bot is saving last three requests and answers
@@ -58,59 +65,20 @@ class pBot(object):
 
         return answer
 
-    def CreateChat(self):
-        url = 'http://p-bot.ru/api/getPatternsCount' 
-
-        stat_code = 0
-        html = ""
-
-        request = Request(url)
-
-        #Cookies
-        request.add_header('Cookie','{0}={1}; {2}={3}; {4}={5}'.\
-                format("dialog_id", self.params["dialog_id"],\
-                       "dialog_sentiment", "0", \
-                       "last_visit", "1542708055035::1542718855035"))
-
-        #Connect and request
+    def create_chat(self):
+        self.session = requests.Session()
+        cookies = {"dialog_id": self.params["dialog_id"], "dialog_sentment": "0", "last_visit": "1542708055035::1542718855035" }
+        
+        js = {}
+        response = None
         try:
-            r = urlopen(request)
-            html = r.read().decode()
-            status_code = r.getcode()
-            js = json.loads(html)
+            response = self.session.get(self.CREATE_DIALOG_URL, cookies = cookies)
+            js = response.json() 
         except Exception as e:
             print("Request error!: {0}".format(e))
-            return False
 
         if "status" not in js or js["status"] != "OK":
-            print("Impossible to create chat! -> {0}".format(html))
-            return False
-
-        return True 
-
-    def InitParams(self):
-        #get unix_time
-        y4 = int(crc.unix_time(datetime.today()) * 1000) - 10000000
-        self.params = {"request" : "",
-                "request_1" : "",
-                "answer_1" : "",
-                "request_2" : "",
-                "answer_2" : "",
-                "request_3" : "",
-                "bot_name" : "pBot",
-                "user_name" : self.name,
-                "dialog_lang" : "ru",
-                "dialog_id" : crc.uuidv4(),
-                "dialog_greeting" : "False",
-
-                "a" : crc.api(),
-                "b" : crc.crc(str(y4) + 'b'),
-                "c" : crc.getCRCSign(y4),
-                "d" : crc.crc(str(int(crc.unix_time(datetime.today()) * 1000) ) + 'd'),
-                "e" : random.random(),
-                "t" : y4,
-                "x" : random.random() * 10}
-
+            print("faild to create chat! -> {0}".format(response.content))
 
 
 

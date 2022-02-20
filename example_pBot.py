@@ -2,10 +2,8 @@ import pBot
 
 pbot = pBot.pBot("anonym")
 
-pbot.Init()
-
 msg = input("Введите сообщение: ")
 while msg != "exit":
 
-    print("pBot: {0}".format(pbot.Ask(msg)))
+    print("pBot: {0}".format(pbot.ask(msg)))
     msg = input("Вы: ")
